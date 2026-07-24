@@ -42,9 +42,10 @@ creates the Pagefind index in `dist/pagefind/`.
 Every push to `main` runs `.github/workflows/deploy.yml`. The workflow builds
 the site with Node.js 24 and deploys `dist/` to GitHub Pages.
 
-The GitHub Pages custom domain is `ryanchristensen.net`. DNS cutover is a
-separate, approval-gated operation documented in
-[`docs/dns-cutover.md`](docs/dns-cutover.md).
+The GitHub Pages custom domain is `ryanchristensen.net`. Production DNS points
+to GitHub Pages and HTTPS enforcement is enabled. The approval boundary,
+record set, validation evidence, and separately gated rollback are documented
+in [`docs/dns-cutover.md`](docs/dns-cutover.md).
 
 ## Credits and license
 
