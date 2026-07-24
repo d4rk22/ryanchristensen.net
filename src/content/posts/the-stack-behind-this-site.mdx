@@ -1,0 +1,56 @@
+---
+author: Ryan Christensen
+pubDatetime: 2026-07-23T18:00:00-05:00
+title: The stack behind this site
+featured: true
+draft: false
+tags:
+  - astro
+  - meta
+  - web
+description: "Why this site uses AstroPaper, Markdown and MDX, Pagefind, and GitHub Actions."
+---
+
+import ResponsiveTable from "@/components/ResponsiveTable.astro";
+
+This site starts with a deliberately small constraint: publishing a note should
+feel closer to saving a text file than operating a content platform.
+
+That led to a static stack with very few moving parts.
+
+<ResponsiveTable variant="striped-minimal">
+
+| Layer          | Choice                   | Job                                                          |
+| -------------- | ------------------------ | ------------------------------------------------------------ |
+| Site generator | Astro                    | Turns content and components into static HTML                |
+| Theme          | AstroPaper               | Supplies an accessible, content-first foundation             |
+| Content        | Markdown and MDX         | Keeps writing portable while allowing components when useful |
+| Search         | Pagefind                 | Builds a browser-side search index after the site renders    |
+| Delivery       | GitHub Actions and Pages | Builds and publishes every change to `main`                  |
+
+</ResponsiveTable>
+
+## Markdown first, MDX when it earns its place
+
+Most notes can stay plain Markdown. MDX is available for the cases where a
+small Astro component communicates something better than prose alone. The
+table above is one example: it is still authored as Markdown, but wrapped in a
+responsive component.
+
+## Search without a service
+
+Pagefind runs after Astro finishes the production build. It indexes the final
+HTML and emits a compact search bundle alongside the site, so search needs no
+database, account, or long-running process.
+
+## A visible deployment path
+
+The repository's GitHub Actions workflow installs from the lockfile, performs a
+production build, uploads the generated artifact, and deploys it to GitHub
+Pages. The workflow is the deployment runbook: there is no separate dashboard
+configuration hiding the build command.
+
+> [!NOTE]
+> The custom-domain DNS change is intentionally separate from the code
+> deployment. That keeps the current endpoint untouched until the new build
+> and its rollback path have both been checked.
