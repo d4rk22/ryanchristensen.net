@@ -1,0 +1,214 @@
+---
+author: Ryan Christensen
+pubDatetime: 2026-11-18T00:00:00-06:00
+title: Checking my homelab from my phone with Hrafnholt
+tags:
+  - homelab
+  - plex
+  - self-hosting
+description: A tour of my Hrafnholt dashboard, from a Plex stream in Bismarck to the outlet that powers my storage server.
+---
+
+import { Image } from "astro:assets";
+import overview from "../../assets/hrafnholt/overview.jpeg";
+import plex from "../../assets/hrafnholt/plex.jpeg";
+import headroom from "../../assets/hrafnholt/headroom.jpg";
+import engine from "../../assets/hrafnholt/engine.jpeg";
+import capacity from "../../assets/hrafnholt/capacity.jpeg";
+import episodes from "../../assets/hrafnholt/episodes.jpeg";
+import queues from "../../assets/hrafnholt/queues.jpeg";
+import movies from "../../assets/hrafnholt/movies.jpeg";
+import compute from "../../assets/hrafnholt/compute.jpeg";
+import storage from "../../assets/hrafnholt/storage.jpeg";
+import containers from "../../assets/hrafnholt/containers.jpeg";
+import energy from "../../assets/hrafnholt/energy.jpeg";
+import protection from "../../assets/hrafnholt/protection.jpeg";
+import desktop from "../../assets/hrafnholt/desktop.jpeg";
+import power from "../../assets/hrafnholt/power.jpeg";
+
+At 11:40 on a Tuesday night, my rack was pulling about a kilowatt. The UPS was fully charged, which sounds reassuring until you look one line over and see what that buys me under load. Ten minutes.
+
+My power meter tells me what the rack draws, and my UPS tells me how long I could keep it running if the lights went out. That's one reason I like Hrafnholt, the read-only dashboard I built for my homelab.
+
+On a monitor I can put the Plex map beside the transcode gauges and give a day's worth of history the whole row underneath. On my phone those same panels stack in the order I'll walk through here. <a href={desktop.src}>Open the full desktop screenshot</a> if you'd like to see how they fit together.
+
+## Overview
+
+The first four readings tell me what's moving through my internet connection, how much power the rack is drawing, how long the battery could carry it, and whether my services are responding. The two UniFi traces show upload and download separately. Farther down, Uptime Kuma counts seven services up and zero down. That's a quick enough check to do with the phone in one hand.
+
+<Image
+  src={overview}
+  width={756}
+  format="webp"
+  class="mx-auto w-full max-w-sm"
+  alt="The mobile overview stacks a UniFi traffic graph, rack power, ten minutes of UPS runtime, and seven healthy services above the Plex panel."
+/>
+
+## Seven streams from Lincoln
+
+The Plex map is my favorite part to look at. I love seeing those lines fan out from Lincoln on my desktop or my phone. On my phone, the map gets the full width of the screen, with the session details directly underneath. I can follow the teal line to Bismarck, then scroll down and see that a tvOS client there is playing a 1080p episode of _FBI_ directly from my server. Public Mode gives the viewer an alias. In this case, Dáin Ironfoot has an Apple TV.
+
+<Image
+  src={plex}
+  width={756}
+  format="webp"
+  class="mx-auto w-full max-w-sm"
+  alt="Plex activity on a phone. A map connects Lincoln with three other cities, and the list below shows four direct plays and three transcodes."
+/>
+
+Seven streams sounds busy, but those streams ask different things of the machine. For a direct play, Plex can send the file as it is. For a video transcode, the server has to convert the video as it plays. The split under the map gives me a reason to look at the GPU.
+
+## Transcode engine
+
+For a closer look at the Plex host, I have the RTX A2000 and the AMD EPYC 7282 side by side, even in portrait. The rings give me current GPU and CPU utilization. The smaller readings below tell me how busy the video encoder and decoder are, how much video memory is in use, and how hot the card is running.
+
+<Image
+  src={engine}
+  width={756}
+  format="webp"
+  class="mx-auto w-full max-w-sm"
+  alt="Phone view of the RTX A2000 and EPYC gauges with encode, decode, memory, temperature, and power readings below."
+/>
+
+## Capacity headroom
+
+The one-hour view puts hardware utilization above the stream count on the same timeline. On my phone I can follow the teal steps up to seven streams, then look directly above them to see what the encoder was doing. The purple spikes are short enough that a single glance at the live gauge could easily miss them.
+
+<Image
+  src={capacity}
+  width={756}
+  format="webp"
+  class="mx-auto w-full max-w-sm"
+  alt="One hour of hardware samples aligned with Plex stream and transcode counts, followed by a two-column summary on mobile."
+/>
+
+Switching to a day gives me a better sense of the evening rush. Here’s how that chart looks with room to spread out on a monitor.
+
+<Image
+  src={headroom}
+  width={1600}
+  format="webp"
+  alt="Two aligned desktop charts show hardware utilization and simultaneous streams. The selected five-minute interval at 7:25 p.m. shows 19 percent GPU encode and a peak of 18 streams."
+/>
+
+This desktop capture is from a different evening. In the five-minute window highlighted above, Plex peaked at 18 streams and seven video transcodes. GPU encode was at 19 percent for the interval. Having both charts on the same time axis means I can put a number on how much work the card was doing while people were watching.
+
+## Today’s episodes
+
+Sonarr puts the day's TV schedule in time order. Each row has an episode number, a title, and its status at the right edge. On November 17, _The Great British Bake Off_ already had a 1080p file. _Best Medicine_ still said “pending.” I don't look at this often unless someone complains about an episode missing.
+
+<Image
+  src={episodes}
+  width={756}
+  format="webp"
+  class="mx-auto w-full max-w-sm"
+  alt="Sonarr schedule with a 1080p copy of The Great British Bake Off and a pending Best Medicine episode."
+/>
+
+## Download queues
+
+There’s _Best Medicine_ again, this time in SABnzbd with a partly filled progress bar. My regular and 4K queues each get their own row, grouped by download client. With SABnzbd and qBittorrent on one screen, I can see which queue has the file, which ones are idle, and how much data remains.
+
+<Image
+  src={queues}
+  width={756}
+  format="webp"
+  class="mx-auto w-full max-w-sm"
+  alt="Mobile download queues showing Best Medicine in SABnzbd above the separate qBittorrent queues."
+/>
+
+## Recently added movies
+
+For movies, it made sense to show off the movie posters instead of a list. I enjoy seeing what new movies Radarr has added recently.
+
+<Image
+  src={movies}
+  width={756}
+  format="webp"
+  class="mx-auto w-full max-w-sm"
+  alt="Four recently added movies in a two-column poster grid with quality labels."
+/>
+
+## Compute fabric
+
+My three Proxmox nodes are Gondor, Rohan, and Shire. The cluster has 282 GB of RAM between them, but that total hides how unevenly I've divided up the work. Gondor has 16 guests and is using 101 of its 126 GB. Rohan has the same amount of memory and only two guests. On the phone each node gets a row with its own CPU, memory, and storage bars, so it's easy to see where another guest might fit.
+
+<Image
+  src={compute}
+  width={756}
+  format="webp"
+  class="mx-auto w-full max-w-sm"
+  alt="Three stacked Proxmox nodes with guest counts and individual CPU, memory, and storage readings."
+/>
+
+## Erebor storage
+
+Erebor is my TrueNAS box, and yes, it gets a little mountain door of its own. Have you guessed the theme yet?
+
+The big number next to it is space used. The number I care about when adding media is just to the right, where I still have 65.4 TiB free. Under the capacity bar, fifteen minutes of reads and writes tell me what the disks have been doing. Those orange peaks are writes.
+
+<Image
+  src={storage}
+  width={756}
+  format="webp"
+  class="mx-auto w-full max-w-sm"
+  alt="Erebor storage panel with a mountain-door icon, 65.4 TiB free, and a fifteen-minute read and write graph."
+/>
+
+## Container fleet
+
+Arcane reports 43 of 92 containers running in this capture. I still have about 50 stopped Docker containers from an afternoon I spent testing some fanciful new idea. The count is handy, but if I'm looking for Home Assistant I want its individual state. The two-column list gives me the container name, a status dot, and the word “RUNNING.” The full desktop screenshot also shows exited containers, including several of my one-off Plex jobs.
+
+<Image
+  src={containers}
+  width={756}
+  format="webp"
+  class="mx-auto w-full max-w-sm"
+  alt="Arcane container list in two columns, with running states for Home Assistant, PhotoPrism, and other services."
+/>
+
+## Energy ledger
+
+Emporia measures the server room and its air conditioning separately. In this snapshot the equipment was drawing 1,070 watts and the AC just 13. Over the day, though, cooling had already used 6.1 kWh. Putting those figures together helps explain the month-to-date total. By November 17 the lab and its cooling accounted for 51 percent of the electricity my house had used that month.
+
+<Image
+  src={energy}
+  width={756}
+  format="webp"
+  class="mx-auto w-full max-w-sm"
+  alt="Emporia mobile panel comparing server-room and cooling loads, daily energy use, and the lab’s month-to-date share of household energy."
+/>
+
+## Rack energy ledger
+
+The UniFi power distribution unit breaks the rack total down by outlet. Erebor, my TrueNAS box, was drawing 323 watts in this screenshot. That's about a third of the 977 watts measured at the rack. Gondor, the Proxmox host just below it, was pulling another 212.
+
+<Image
+  src={power}
+  width={756}
+  format="webp"
+  class="mx-auto w-full max-w-sm"
+  alt="Mobile rack energy ledger showing 977 watts across 16 outlets, with Erebor first and Gondor second in the outlet breakdown."
+/>
+
+I especially like the layout of that little table. I can read down the device names with my thumb, glance right for watts, and see from the bars how much bigger Erebor's share is. There's enough room for all of that in portrait.
+
+## Protection status
+
+At the bottom I can check what happened overnight. The 3 a.m. Proxmox job backed up 18 guests successfully, and the Ironhills mirror finished its run for 15 datasets. Verification has its own count. Of the 566 restore points on my backup server, 410 had been checked and 156 were still pending. Seeing that count beside the successful jobs gives me a much better answer to “how are the backups?”
+
+<Image
+  src={protection}
+  width={756}
+  format="webp"
+  class="mx-auto w-full max-w-sm"
+  alt="Two successful backup runs below restore-point and verification counts, followed by an empty operator watchlist."
+/>
+
+## What needs attention
+
+The last panel is the operator watchlist. It calls out readings that cross their configured thresholds. In this capture the count is zero, even with some backup verification still pending. I like that I can see both facts on one phone screen and decide whether I need to open Proxmox Backup Server for a closer look.
+
+I've been running a version of this dashboard in my homelab since July, and I'm pretty happy with it. I especially like how it looks on my phone. Even the Plex map feels at home in portrait.
+
+If you'd like to see how it feels on your own phone, the public demo uses fictional data and opens straight in a browser. For your own setup, you can start with a single service and add the panels you care about. [Try the live demo](https://hrafnholt.com/demo/) or [get Hrafnholt on GitHub](https://github.com/d4rk22/hrafnholt).
